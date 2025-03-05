@@ -6,7 +6,7 @@ let tempSlider;
 class Particle {
   constructor(x, y, r) {
     this.pos = createVector(x, y);
-    this.vel = p5.Vector.random2D().mult(random(1, 8)); // Initial velocity
+    this.vel = p5.Vector.random2D().mult(1); // Initial velocity
     this.r = r;
   }
 
@@ -34,10 +34,10 @@ class Particle {
 }
 
 class EyeMolecule {
-  constructor(x, y) {
+  constructor(x, y, r) {
     this.pos = createVector(x, y);
     this.vel = createVector(0, 0);
-    this.r = 15;
+    this.r = r ?? r;
   }
 
   update() {
@@ -74,9 +74,19 @@ function setup(amountOfWaterParticles = 200, temp = 50) {
   document.getElementById("tempValue").textContent = tempSlider.value;
 
   for (let i = 0; i < amountOfWaterParticles; i++) {
-    particles.push(new Particle(random(width / 2), random(height), 6));
+    // particles.push(new Particle(random(width / 2), random(height), 6));
+    particles.push(
+      new Particle(
+        random(width / 8 + 100, width / 4 + 100),
+        random(300, 400),
+        6
+      )
+    );
   }
-  eyeMolecule = new EyeMolecule(width / 4, height / 2);
+  eyeMolecule = new EyeMolecule(width / 4, height / 2, 0);
+  setTimeout(() => {
+    eyeMolecule.r = 15;
+  }, 300);
 
   // Setup temperature slider
   tempSlider.addEventListener("input", () => {
