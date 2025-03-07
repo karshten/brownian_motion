@@ -63,7 +63,7 @@ class EyeMolecule {
   }
 }
 
-function setup(amountOfWaterParticles = 200, temp = 50) {
+function setup(amountOfWaterParticles = 200, temp = 25) {
   let canvas = createCanvas(window.innerWidth - 40, 700);
   canvas.parent("canvas-container"); // Attach canvas to the div
   particles = [];
@@ -95,13 +95,38 @@ function setup(amountOfWaterParticles = 200, temp = 50) {
 }
 
 function drawBrownianMotion() {
-  // Left side: Brownian motion animation
+  //   // Left side: Brownian motion animation
+  //   push();
+  //   fill(255);
+  //   rect(0, 0, width / 2, height); // White background for animation
+  //   let temperature = parseInt(tempSlider.value); // Get temperature from slider
+  //   for (let p of particles) {
+  //     p.update(temperature); // Pass temperature to update
+  //     p.show();
+  //     eyeMolecule.collide(p);
+  //   }
+  //   eyeMolecule.update();
+  //   eyeMolecule.show();
+  //   pop();
+
   push();
   fill(255);
-  rect(0, 0, width / 2, height); // White background for animation
-  let temperature = parseInt(tempSlider.value); // Get temperature from slider
-  for (let p of particles) {
-    p.update(temperature); // Pass temperature to update
+  rect(0, 0, width / 2, height);
+  let temperature = parseInt(tempSlider.value);
+  for (let i = 0; i < particles.length; i++) {
+    let p = particles[i];
+    p.update(temperature);
+    // Check collisions with other particles
+    for (let j = i + 1; j < particles.length; j++) {
+      let other = particles[j];
+      let d = dist(p.pos.x, p.pos.y, other.pos.x, other.pos.y);
+      if (d < p.r + other.r) {
+        let force = p5.Vector.sub(p.pos, other.pos);
+        force.setMag(0.5); // Small bounce force
+        p.vel.add(force);
+        other.vel.sub(force);
+      }
+    }
     p.show();
     eyeMolecule.collide(p);
   }
@@ -112,7 +137,7 @@ function drawBrownianMotion() {
 
 function drawPathRecorder() {
   // Right side: Paper-like path recorder with full history
-  push(); 
+  push();
   translate(width / 2, 0);
   fill(100, 150, 255, 150); // Light beige "paper" color
   rect(0, 0, width / 2, height); // Paper background
@@ -162,7 +187,7 @@ applyBtn.addEventListener("click", () => {
   console.log(inputParticlesAmount.value);
   if (
     !isNaN(+inputParticlesAmount.value) &&
-    inputParticlesAmount.value <= 10000 &&
+    inputParticlesAmount.value <= 1000 &&
     inputParticlesAmount.value > 0
   ) {
     tempSlider = document.getElementById("tempSlider");
